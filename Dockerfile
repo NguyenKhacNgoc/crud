@@ -14,7 +14,7 @@ RUN mvn clean package -DskipTests
 FROM openjdk:17-alpine
 
 # Sao chép file JAR đã xây dựng từ giai đoạn trước vào hình ảnh
-COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --from=build /app/target/crud-0.0.1-SNAPSHOT.jar /app/app.jar
 
 # Mở cổng mạng
 EXPOSE 8080
