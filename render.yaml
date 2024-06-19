@@ -1,0 +1,6 @@
+services:
+  - name: backend
+    plan: starter
+    env:
+      - key: JAVA_TOOL_OPTIONS
+        value: "-Dserver.port=$PORT"
