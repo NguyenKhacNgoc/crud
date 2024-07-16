@@ -1,6 +1,9 @@
-package com.example.crud.DTO.Request;
+package com.example.crud.Entity;
 
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,15 +11,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+@Table
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDTO {
-    String userName;
-    @Size(min = 8, message = "PASSWORD_VALID")
-    String passWord;
-    String fullName;
-
+public class Permission {
+    @Id
+    String name;
+    @Column
+    String description;
 }
