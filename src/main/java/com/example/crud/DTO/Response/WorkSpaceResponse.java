@@ -1,6 +1,6 @@
-package com.example.crud.DTO.Response;
+package com.example.crud.dto.response;
 
-import java.util.Set;
+import java.time.LocalDate;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,9 +14,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDTOResponse {
+public class WorkSpaceResponse {
     String id;
-    String userName;
-    String fullName;
-    Set<RoleResponse> roles;
+    LocalDate createAt;
+    String name;
+    String description;
+    UserResponse createBy;
 }

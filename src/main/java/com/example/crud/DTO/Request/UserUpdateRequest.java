@@ -1,8 +1,5 @@
-package com.example.crud.DTO.Request;
+package com.example.crud.dto.request;
 
-import java.util.Set;
-
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,10 +13,9 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-    String userName;
-    @Size(min = 8, message = "PASSWORD_VALID")
-    String passWord;
-    String fullName;
-    Set<String> roles;
+
+    String email;
+    String firstName;
+    String lastName;
 
 }

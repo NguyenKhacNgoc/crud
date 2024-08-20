@@ -1,54 +1,43 @@
-package com.example.crud.Services;
+package com.example.crud.services;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.Collections;
 
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.RolesResource;
+import org.keycloak.admin.client.resource.UserResource;
+import org.keycloak.representations.idm.RoleRepresentation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import com.example.crud.DTO.Request.RoleRequest;
-import com.example.crud.DTO.Request.UpdatePermissionToRoleRequest;
-import com.example.crud.DTO.Response.RoleResponse;
-import com.example.crud.Exception.AppException;
-import com.example.crud.Exception.ErrorCode;
-import com.example.crud.Mapper.RoleMapper;
-import com.example.crud.Repository.PermissionRepository;
-import com.example.crud.Repository.RoleRepository;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RoleService {
-    RoleRepository roleRepository;
-    RoleMapper roleMapper;
-    PermissionRepository permissionRepository;
+    Keycloak keycloak;
+    @NonFinal
+    @Value("${keycloak.realm}")
+    String realm;
 
-    public RoleResponse createRole(RoleRequest request) {
-        var role = roleMapper.toRole(request);
-        var permissions = permissionRepository.findAllById(request.getPermissions());
-        role.setPermissions(new HashSet<>(permissions));
-        return roleMapper.toRoleResponse(roleRepository.save(role));
+    public void assignRole(String userId, String roleName) {
+
+        UserResource userResource = keycloak.realm(realm).users().get(userId);
+        RolesResource rolesResource = keycloak.realm(realm).roles();
+        RoleRepresentation representation = rolesResource.get(roleName).toRepresentation();
+        userResource.roles().realmLevel().add(Collections.singletonList(representation));
+
     }
 
-    public List<RoleResponse> getAll() {
-        var roles = roleRepository.findAll();
-        return roles.stream().map(roleMapper::toRoleResponse).toList();
-    }
+    public void deleteRoleFromUser(String userId, String roleName) {
 
-    public void deleteRole(String role) {
-        roleRepository.deleteById(role);
-    }
-
-    public RoleResponse updatePermissionToRole(UpdatePermissionToRoleRequest request) {
-        var role = roleRepository.findById(request.getRole())
-                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
-        var permissions = permissionRepository.findAllById(request.getPermissions());
-        role.setPermissions(new HashSet<>(permissions));
-        return roleMapper.toRoleResponse(roleRepository.save(role));
-
+        UserResource userResource = keycloak.realm(realm).users().get(userId);
+        RolesResource rolesResource = keycloak.realm(realm).roles();
+        RoleRepresentation representation = rolesResource.get(roleName).toRepresentation();
+        userResource.roles().realmLevel().remove(Collections.singletonList(representation));
     }
 
 }

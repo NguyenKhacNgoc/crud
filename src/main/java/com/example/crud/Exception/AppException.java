@@ -1,4 +1,4 @@
-package com.example.crud.Exception;
+package com.example.crud.exception;
 
 public class AppException extends RuntimeException {
     private ErrorCode errorCode;

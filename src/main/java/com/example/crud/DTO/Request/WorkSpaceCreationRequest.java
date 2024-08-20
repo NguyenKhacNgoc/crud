@@ -1,4 +1,4 @@
-package com.example.crud.DTO.Request;
+package com.example.crud.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

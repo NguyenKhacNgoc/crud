@@ -1,12 +1,21 @@
-package com.example.crud.Exception;
+package com.example.crud.exception;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.example.crud.DTO.Response.ApiResponse;
+import com.example.crud.dto.response.ApiResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import feign.FeignException;
+import jakarta.ws.rs.ClientErrorException;
+import jakarta.ws.rs.NotFoundException;
 
 @ControllerAdvice
 public class GlobalException {
@@ -52,4 +61,45 @@ public class GlobalException {
         apiResponse.setMessage(errorCode.getMessage());
         return ResponseEntity.badRequest().body(apiResponse);
     }
+
+    @ExceptionHandler(value = FeignException.class)
+    ResponseEntity<?> handlingFeignException(FeignException exception)
+            throws JsonMappingException, JsonProcessingException {
+        @SuppressWarnings("rawtypes")
+        ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setCode(ErrorCode.USER_EXISTED.getCode());
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode errorResponse = objectMapper.readTree(exception.contentUTF8());
+
+        apiResponse.setMessage(errorResponse.get("errorMessage").asText());
+        return ResponseEntity.badRequest().body(apiResponse);
+    }
+
+    // Bắt lỗi keycloak 409
+    @SuppressWarnings("rawtypes")
+    @ExceptionHandler(value = ClientErrorException.class)
+    ResponseEntity<?> handingConflict(ClientErrorException exception)
+            throws JsonMappingException, JsonProcessingException {
+        ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setCode(exception.getResponse().getStatus());
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode errorJsonNode = objectMapper.readTree(exception.getResponse().readEntity(String.class));
+
+        apiResponse.setMessage(errorJsonNode.get("errorMessage").asText());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(apiResponse);
+    }
+
+    // Bắt lỗi keycloak 404
+    @SuppressWarnings("rawtypes")
+    @ExceptionHandler(value = NotFoundException.class)
+    ResponseEntity<?> handingUserNotFound(NotFoundException exception)
+            throws JsonMappingException, JsonProcessingException {
+        ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setCode(exception.getResponse().getStatus());
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode errorJsonNode = objectMapper.readTree(exception.getResponse().readEntity(String.class));
+        apiResponse.setMessage(errorJsonNode.get("error").asText());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(apiResponse);
+    }
+
 }

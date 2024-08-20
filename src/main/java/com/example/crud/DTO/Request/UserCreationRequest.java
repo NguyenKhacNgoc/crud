@@ -1,7 +1,6 @@
-package com.example.crud.DTO.Response;
+package com.example.crud.dto.request;
 
-import java.util.Set;
-
+import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,8 +13,12 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class RoleResponse {
-    String name;
-    String description;
-    Set<PermissionResponse> permissions;
+public class UserCreationRequest {
+    String username;
+    String email;
+    @Size(min = 8, message = "PASSWORD_VALID")
+    String password;
+    String firstName;
+    String lastName;
+
 }

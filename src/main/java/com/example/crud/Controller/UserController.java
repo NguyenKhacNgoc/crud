@@ -1,7 +1,8 @@
-package com.example.crud.Controller;
+package com.example.crud.controller;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,21 +10,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.crud.DTO.Request.ChangePassWordRequest;
-import com.example.crud.DTO.Request.UpdateRoleToUserRequest;
-import com.example.crud.DTO.Request.UserDTO;
-import com.example.crud.DTO.Request.UserUpdateRequest;
-import com.example.crud.DTO.Request.idRequest;
-import com.example.crud.DTO.Response.ApiResponse;
+import com.example.crud.dto.request.UserCreationRequest;
+import com.example.crud.dto.request.UserUpdateRequest;
+import com.example.crud.dto.response.ApiResponse;
+import com.example.crud.dto.response.PageResponse;
+import com.example.crud.dto.response.UserResponse;
+import com.example.crud.entity.User;
+import com.example.crud.exception.AppException;
+import com.example.crud.exception.ErrorCode;
+import com.example.crud.repository.UserRepository;
+import com.example.crud.services.UserService;
 
-import com.example.crud.DTO.Response.UserDTOResponse;
-import com.example.crud.Entity.User;
-import com.example.crud.Exception.AppException;
-import com.example.crud.Exception.ErrorCode;
-import com.example.crud.Repository.UserRepository;
-import com.example.crud.Services.UserService;
-
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -31,18 +28,24 @@ import lombok.experimental.FieldDefaults;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("api/user")
+@RequestMapping("api")
 @SuppressWarnings({ "unchecked", "rawtypes" })
 
 public class UserController {
     UserService userService;
     UserRepository userRepository;
 
-    @GetMapping("getUsers")
-    public ApiResponse<?> getUser(@RequestParam("pageNumber") Integer pageNumber,
-            @RequestParam("pageSize") Integer pageSize) {
+    @PostMapping("register")
+    public void createUser(@RequestBody UserCreationRequest request) {
+        userService.createUser(request);
+    }
+
+    @GetMapping("users")
+    public ApiResponse<PageResponse<UserResponse>> getUser(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.getAllUser(pageNumber, pageSize));
+        apiResponse.setResult(userService.getAllUser(page, size));
         return apiResponse;
     }
 
@@ -52,54 +55,40 @@ public class UserController {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
     }
 
-    @PostMapping("create")
-    public ApiResponse<UserDTOResponse> createUser(@Valid @RequestBody UserDTO request) {
-        ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.createUser(request));
-        return apiResponse;
-
-    }
-
-    @PutMapping("update")
-    public ApiResponse<?> updateUser(@RequestBody UserUpdateRequest request) {
-        ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.updateUser(request));
-        return apiResponse;
-    }
-
-    @PutMapping("updateRoleToUser")
-    public ApiResponse<?> updateRoleForUser(@RequestBody UpdateRoleToUserRequest request) {
-        ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.updateRoleToUser(request));
-        return apiResponse;
-    }
-
-    @DeleteMapping("delete")
-    public ApiResponse<?> deleteUser(@RequestBody idRequest request) {
-        ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.deleteUser(request.getId()));
-        return apiResponse;
-    }
-
-    @PutMapping("changePassWord")
-    public ApiResponse<UserDTOResponse> changePassword(@RequestBody ChangePassWordRequest request) {
-        ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setResult(userService.changePassWord(request));
-        return apiResponse;
+    @DeleteMapping("user/delete/{id}")
+    public void deleteUser(@PathVariable String id) {
+        userService.deleteUser(id);
     }
 
     @GetMapping("getUser")
-    public ApiResponse<UserDTOResponse> getUser(@RequestParam("id") String id) {
+    public ApiResponse<UserResponse> getUser(@RequestParam("id") String id) {
         ApiResponse apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.getUser(id));
         return apiResponse;
     }
 
     @GetMapping("getMyInfo")
-    public ApiResponse<UserDTOResponse> getMyInfo() {
+    public ApiResponse<UserResponse> getMyInfo() {
         ApiResponse apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.getMyInfo());
         return apiResponse;
+    }
+
+    @PutMapping("/user/update/{id}")
+    public ApiResponse<?> updateUser(@PathVariable String id,
+            @RequestBody UserUpdateRequest request) {
+        ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.updateUser(id, request));
+        return apiResponse;
+
+    }
+
+    @PutMapping("/user/update")
+    public ApiResponse<?> updateMyUser(@RequestBody UserUpdateRequest request) {
+        ApiResponse apiResponse = new ApiResponse<>();
+        apiResponse.setResult(userService.updateUser(null, request));
+        return apiResponse;
+
     }
 
 }

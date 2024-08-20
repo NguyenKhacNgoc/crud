@@ -1,4 +1,4 @@
-package com.example.crud.DTO.Request;
+package com.example.crud.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PermissionRequest {
-    String name;
-    String description;
+public class UserResponse {
+    String id;
+    String username;
+    String email;
+    String firstName;
+    String lastName;
 }

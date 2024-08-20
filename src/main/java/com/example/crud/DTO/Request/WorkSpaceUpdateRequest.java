@@ -1,4 +1,4 @@
-package com.example.crud.DTO.Request;
+package com.example.crud.dto.request;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class WorkSpaceUpdateRequest {
-    String id;
     String name;
     String description;
 }

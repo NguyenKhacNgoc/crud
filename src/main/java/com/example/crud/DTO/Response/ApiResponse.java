@@ -1,4 +1,4 @@
-package com.example.crud.DTO.Response;
+package com.example.crud.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
-    private int code = 1000;
+    private int code = 200;
     private String message;
     private T result;
 

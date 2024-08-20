@@ -1,75 +1,70 @@
-package com.example.crud.Controller;
-
-import java.util.Optional;
+package com.example.crud.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.crud.DTO.Request.WorkSpaceCreationRequest;
-import com.example.crud.DTO.Request.WorkSpaceUpdateRequest;
-import com.example.crud.DTO.Request.idRequest;
-import com.example.crud.DTO.Response.ApiResponse;
-import com.example.crud.DTO.Response.WorkSpaceDTOResponse;
-import com.example.crud.Entity.WorkSpace;
-import com.example.crud.Repository.WorkSpaceRepository;
-import com.example.crud.Services.WorkSpaceService;
+
+import com.example.crud.dto.request.WorkSpaceCreationRequest;
+import com.example.crud.dto.request.WorkSpaceUpdateRequest;
+import com.example.crud.dto.response.ApiResponse;
+import com.example.crud.dto.response.PageResponse;
+import com.example.crud.dto.response.WorkSpaceResponse;
+import com.example.crud.services.WorkSpaceService;
 
 @RestController
-@RequestMapping("api/wsp")
+@RequestMapping("api")
 @SuppressWarnings({ "unchecked", "rawtypes" })
 
 public class WorkSpaceController {
     @Autowired
     private WorkSpaceService workSpaceService;
-    @Autowired
-    private WorkSpaceRepository workSpaceRepository;
 
-    @PostMapping("create")
-    public ApiResponse<WorkSpaceDTOResponse> createWSP(@RequestBody WorkSpaceCreationRequest request) {
+    @PostMapping("wsp/create")
+    public ApiResponse<WorkSpaceResponse> createWSP(@RequestBody WorkSpaceCreationRequest request) {
         ApiResponse apiResponse = new ApiResponse<>();
         apiResponse.setResult(workSpaceService.createWorkSpace(request));
         return apiResponse;
 
     }
 
-    @PutMapping("update")
-    public ApiResponse<WorkSpaceDTOResponse> updateWSP(@RequestBody WorkSpaceUpdateRequest request) {
+    @PutMapping("wsp/update/{id}")
+    public ApiResponse<WorkSpaceResponse> updateWSP(@RequestBody WorkSpaceUpdateRequest request,
+            @PathVariable String id) {
         ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setResult(workSpaceService.updateWorkSpace(request));
+        apiResponse.setResult(workSpaceService.updateWorkSpace(request, id));
         return apiResponse;
 
     }
 
-    @DeleteMapping("delete")
-    public ResponseEntity<?> deleteWSP(@RequestBody idRequest request) {
-        Optional<WorkSpace> exWSP = workSpaceRepository.findWSPById(request.getId());
-        if (exWSP.isPresent()) {
-            workSpaceRepository.delete(exWSP.get());
-            return ResponseEntity.ok().body("Xoá thành công");
-        } else
-            return ResponseEntity.badRequest().body("Work Space không tồn tại");
+    @DeleteMapping("wsp/delete/{id}")
+    public void deleteWSP(@PathVariable String id) {
+        workSpaceService.deleteWorkSpace(id);
 
     }
 
-    @GetMapping("findWSP")
-    public ApiResponse<WorkSpaceDTOResponse> findWSP(@RequestParam("name") String name) {
+    @GetMapping("wsp")
+    public ApiResponse<PageResponse<WorkSpaceResponse>> findWSP(@RequestParam("name") String name,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setResult(workSpaceService.findWorkSpaceByName(name));
+        apiResponse.setResult(workSpaceService.findWorkSpaceByName(name, page, size));
         return apiResponse;
     }
 
-    @GetMapping("findAll")
-    public ApiResponse<WorkSpaceDTOResponse> findAllWSP(@RequestParam("pageNumber") Integer pageNumber,
-            @RequestParam("pageSize") Integer pageSize) {
+    @GetMapping("wsps")
+    public ApiResponse<PageResponse<WorkSpaceResponse>> findAllWSP(
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
         ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setResult(workSpaceService.findAll(pageNumber, pageSize));
+        apiResponse.setResult(workSpaceService.findAll(page, size));
         return apiResponse;
 
     }

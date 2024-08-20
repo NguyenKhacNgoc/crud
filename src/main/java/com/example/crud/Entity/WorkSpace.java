@@ -1,4 +1,4 @@
-package com.example.crud.Entity;
+package com.example.crud.entity;
 
 import java.time.LocalDate;
 

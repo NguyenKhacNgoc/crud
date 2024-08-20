@@ -1,6 +1,4 @@
-package com.example.crud.DTO.Request;
-
-import java.util.Set;
+package com.example.crud.dto.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -9,13 +7,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdatePermissionToRoleRequest {
-    String role;
-    Set<String> permissions;
+public class CatalogResponse {
+    String catalog;
+    String description;
 
 }
