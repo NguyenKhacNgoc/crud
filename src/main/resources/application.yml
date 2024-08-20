@@ -1,0 +1,43 @@
+spring.application.name=crud
+
+# spring.datasource.url=jdbc:postgresql://dpg-cpp60j88fa8c7399l20g-a.oregon-postgres.render.com:5432/khacngoc
+# spring.datasource.username=khacngoc_user
+# spring.datasource.password=y6A1Nq7yeqJ4mJw9YK3KJ4GhvbT7oqRb
+
+#
+# spring.datasource.driver-class-name=org.postgresql.Driver
+
+# spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+# spring.jpa.hibernate.ddl-auto=update
+#
+spring.datasource.url=jdbc:mysql://localhost:3308/crud
+spring.datasource.username=root
+spring.datasource.password=root
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+spring.jpa.hibernate.ddl-auto=update
+
+#idp.url = http://localhost:8180
+#idp.client-id = crud_server
+#idp.client-secret = fluURBwVXZzQNno1IAgXNQ2yzOW8voLn
+#security.oauth2.resourceserver.jwt.issuer-uri = http://localhost:8180/realms/khacngoc
+
+# Keycloak server URL and realm information
+keycloak.auth-server-url=http://localhost:8180
+keycloak.realm=khacngoc
+keycloak.resource=crud_server
+keycloak.credentials.secret=fluURBwVXZzQNno1IAgXNQ2yzOW8voLn
+keycloak.bearer-only=true
+keycloak.admin.client-id = admin-cli
+keycloak.admin.username = admin
+keycloak.admin.password = admin
+spring.security.oauth2.client.provider.keycloak.issuer-uri=http://localhost:8180/realms/khacngoc
+spring.security.oauth2.client.registration.keycloak.client-id=crud_server
+spring.security.oauth2.client.registration.keycloak.client-secret=fluURBwVXZzQNno1IAgXNQ2yzOW8voLn
+keycloak.policy-enforcer-config.enforcement-mode=ENFORCING
+
+
+
+
+
+
