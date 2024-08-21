@@ -12,8 +12,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import feign.FeignException;
 import jakarta.ws.rs.ClientErrorException;
 import jakarta.ws.rs.NotFoundException;
 
@@ -59,19 +57,6 @@ public class GlobalException {
         ApiResponse apiResponse = new ApiResponse<>();
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
-        return ResponseEntity.badRequest().body(apiResponse);
-    }
-
-    @ExceptionHandler(value = FeignException.class)
-    ResponseEntity<?> handlingFeignException(FeignException exception)
-            throws JsonMappingException, JsonProcessingException {
-        @SuppressWarnings("rawtypes")
-        ApiResponse apiResponse = new ApiResponse<>();
-        apiResponse.setCode(ErrorCode.USER_EXISTED.getCode());
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode errorResponse = objectMapper.readTree(exception.contentUTF8());
-
-        apiResponse.setMessage(errorResponse.get("errorMessage").asText());
         return ResponseEntity.badRequest().body(apiResponse);
     }
 

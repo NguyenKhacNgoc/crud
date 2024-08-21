@@ -19,12 +19,12 @@ import lombok.experimental.FieldDefaults;
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@RequestMapping("api/catalog")
+@RequestMapping("api")
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class CatalogController {
     CatalogService catalogService;
 
-    @PostMapping("create")
+    @PostMapping("catalog/create")
     public ApiResponse<?> createCatalog(@RequestBody CatalogRequest request) {
         ApiResponse apiResponse = new ApiResponse<>();
         apiResponse.setResult(catalogService.createCatalog(request));
@@ -38,7 +38,7 @@ public class CatalogController {
         return apiResponse;
     }
 
-    @DeleteMapping("{catalog}")
+    @DeleteMapping("catalog/delete/{catalog}")
     public ApiResponse<?> deleteCatalog(@PathVariable("catalog") String catalog) {
         ApiResponse apiResponse = new ApiResponse<>();
         apiResponse.setResult(catalogService.deleteCatalog(catalog));

@@ -4,7 +4,7 @@ import java.util.Collections;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
-import org.keycloak.representations.idm.RoleRepresentation;
+
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
@@ -62,13 +62,11 @@ public class UserService {
             String pathUri = response.getLocation().getPath();
             int lastSlashIndex = pathUri.lastIndexOf("/");
             String userId = pathUri.substring(lastSlashIndex + 1);
-            RoleRepresentation userRole = keycloak.realm(realm).roles().get("user").toRepresentation();
-            keycloak.realm(realm).users().get(userId).roles().realmLevel().add(Collections.singletonList(userRole));
+
             User userdb = userMapper.toUser(request);
             userdb.setId(userId);
             userRepository.save(userdb);
             log.info("response " + userId);
-            sendVerificationEmail(userId);
 
         } else if (response.getStatus() == 409) {
             throw new AppException(ErrorCode.USER_EXISTED);
